@@ -18,6 +18,6 @@ Another use case could be converting user gestures caputred by a webcam.
 TODO
 =================
 
-Vector to gesture using polynomial line fitting using matrices.
+"VectorToGesture" using polynomial line fitting with matrices.
 
 http://en.wikipedia.org/wiki/Polynomial_regression
