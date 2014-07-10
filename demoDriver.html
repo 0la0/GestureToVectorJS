@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Gesture to Vector Demo</title>
+	<style>
+		body
+		{
+			background: #cccccc;
+		}
+		#cvs
+		{
+			background: #ffffff;
+			border: 1px solid #000000;
+			margin-left: 30px;
+			margin-top: 30px;
+		}
+	</style>
+	<script src="gestureToVector.js"></script>
+</head>
+<body>
+</body>
+	<canvas id="cvs"></canvas>
+	<script>
+		var width = 600;
+		var height = 400;
+		var mouseIsDown = false;
+		var isRendering = false;
+		var lastIndexRendered;
+		var gesture = [];
+		var g2d;
+		var canvas = document.getElementById('cvs');
+		canvas.width = width;
+		canvas.height = height;
+
+		//create graphics context
+		g2d = canvas.getContext('2d');
+		g2d.lineWidth = 4;
+		g2d.lineCap = 'round';
+		g2d.lineJoin = 'round';
+		g2d.strokeStyle = "#333333";
+		g2d.clearRect(0, 0, width, height);
+	
+		//register canvas listeners - mouse
+		canvas.addEventListener('mousedown', function(e){
+			e.preventDefault();
+			initGesture();
+			pushCoordsToGesture(
+				e.pageX - canvas.offsetLeft,
+				e.pageY - canvas.offsetTop
+			);
+		}, false);
+		canvas.addEventListener('mousemove', function(e){
+			e.preventDefault();
+			if (mouseIsDown){
+				pushCoordsToGesture(
+					e.pageX - canvas.offsetLeft,
+					e.pageY - canvas.offsetTop
+				);
+			}
+		}, false);
+		canvas.addEventListener('mouseup', function(e){
+			e.preventDefault();
+			mouseIsDown = false;
+			demoGestToVect();
+		}, false);
+		
+		//register canvas listeners - touch: one finger only
+		canvas.addEventListener('touchstart', function(e){
+			e.preventDefault();
+			initGesture();
+			pushCoordsToGesture(
+				e.touches[0].pageX - canvas.offsetLeft,
+				e.touches[0].pageY - canvas.offsetTop
+			);
+		}, false);
+		canvas.addEventListener('touchmove', function(e){
+			e.preventDefault();
+			if (mouseIsDown){
+				pushCoordsToGesture(
+					e.touches[0].pageX - canvas.offsetLeft,
+					e.touches[0].pageY - canvas.offsetTop
+				);
+			}
+		}, false);
+		canvas.addEventListener('touchend', function(e){
+			e.preventDefault();
+			mouseIsDown = false;
+			demoGestToVect();
+		}, false);
+
+		function initGesture(){
+			g2d.clearRect(0, 0, width, height);
+			gesture = [];
+			lastIndexRendered = 1;
+			mouseIsDown = true;
+		}
+
+		function pushCoordsToGesture(x, y){
+			gesture.push({
+				x: x, 
+				y: y
+			});
+			if (!isRendering){
+				isRendering = true;
+				requestAnimationFrame(renderLine);
+			}
+		}
+
+		function renderLine(){
+			g2d.beginPath();
+			//g2d.moveTo(gesture[i - 1].x, gesture[i - 1].y);
+			g2d.moveTo(
+				gesture[lastIndexRendered - 1].x,
+				gesture[lastIndexRendered - 1].y
+			);
+			for (var i=lastIndexRendered; i < gesture.length; i++){
+				g2d.lineTo(gesture[i].x, gesture[i].y);
+			}
+			g2d.closePath();
+			g2d.stroke();
+			lastIndexRendered = gesture.length;
+			isRendering = false;
+		}
+
+		function demoGestToVect(){
+	 		var vector = new GestureToVector(gesture);
+			vector.render(g2d);
+	 	}
+	</script>
+</html>
