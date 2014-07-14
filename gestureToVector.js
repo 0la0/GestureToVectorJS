@@ -87,11 +87,10 @@ GestureToVector.prototype.findSubDiv = function(startIndex, endIndex){
 			absMin.yIndex = i;
 		}
 	}
-	controlPoints.push(absMax.xIndex);
-	controlPoints.push(absMax.yIndex);
-	controlPoints.push(absMin.xIndex);
-	controlPoints.push(absMin.yIndex);	
-
+	controlPoints.push(
+		absMax.xIndex, absMax.yIndex,
+		absMin.xIndex, absMin.yIndex
+	);	
 	var cnt = 0;
 	// if this control point is not in master, put it in
 	for (var i = 0; i < 4; i++){
